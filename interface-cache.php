@@ -10,31 +10,8 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 namespace PHPLiveReload;
-require_once('file-alteration-monitor.php');
-class Daemon {
-	public function __construct($directories, $cache_engine){
-		$f = new File_Alteration_Monitor($directories, $cache_engine);
-		while(1){
-			sleep(1);
-			/*
-			if($new_files = $f->get_new_files()){
-				echo 'new files';
-				print_r($new_files);
-			}
-			if($removed_files = $f->get_removed_files()){
-				echo 'removed files';
-				print_r($removed_files);
-			}
-			$f->update_monitor();
-			*/
-			$new_files = $f->get_new_files();
-			$removed_files = $f->get_removed_files();
-			if(sizeof($new_files) > 0 || sizeof($removed_files) > 0){
-				echo json_encode(array('reload' => true));
-				die();
-			}
-			$f->update_monitor();
-		}
-	}
-	
+interface ICache {
+	function read($key);
+	function write($key, $value);
 }
+?>

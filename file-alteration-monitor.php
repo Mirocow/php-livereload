@@ -17,10 +17,15 @@ http://php.net/manual/en/ref.fam.php
 Thanks, Yassin.
 */
 class File_Alteration_Monitor{
-	private $scan_directories, $initial_found_files;
-	public function __construct($scan_directories){
+	private $scan_directories, $initial_found_files, $cache;
+	public function __construct($scan_directories, $cache_engine){
 		$this->scan_directories = $scan_directories;
-		$this->update_monitor();
+		$this->cache = $cache_engine;
+		if(is_null($this->cache->read('initial_found_files'))){
+			$this->update_monitor();
+		}else{
+			$this->initial_found_files = $this->cache->read('initial_found_files');
+		}
 	}
 	private function array_values_recursive($array){
 		$array_values = array();
@@ -69,6 +74,7 @@ class File_Alteration_Monitor{
 	}
 	public function update_monitor(){
 		$this->initial_found_files = $this->array_values_recursive($this->scandir_recursive($this->scan_directories));
+		$this->cache->write('initial_found_files', $this->initial_found_files);
 	}
 }
 ?>
